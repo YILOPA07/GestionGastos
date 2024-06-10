@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Control de Gastos</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <style>
+      #chart-section {
+        position: relative;
+        width: 50%;
+        height: 50%;
+        margin: auto;
+      }
+      #expense-chart {
+        width: 100% !important;
+        height: 100% !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <h1>Control de Gastos</h1>
+      </header>
+      <nav>
+        <ul>
+          <li><a href="#form-section">Registrar Ingreso/Gasto</a></li>
+          <li><a href="#history-section">Historial</a></li>
+          <li><a href="#chart-section">Gráfica</a></li>
+        </ul>
+      </nav>
+      <section id="form-section">
+        <h2>Registrar Ingreso/Gasto</h2>
+        <form id="transaction-form" @submit.prevent="addTransaction">
+          <input
+            type="text"
+            v-model="description"
+            placeholder="Descripción"
+            required
+          />
+          <input
+            type="number"
+            v-model="amount"
+            placeholder="Cantidad"
+            required
+          />
+          <select v-model="type" required>
+            <option value="income">Ingreso</option>
+            <option value="expense">Gasto</option>
+          </select>
+          <button type="submit">Agregar</button>
+        </form>
+      </section>
+
+      <!--Sección en la cual se muestr el histrial de las transacciones realidas-->
+      <section id="history-section">
+        <h2>Historial de Transacciones</h2>
+        <table id="transaction-history">
+            <thead>
+                <tr>
+                    <th>Descripción</th>
+                    <th>Monto</th>
+                    <th>Tipo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(transaction, index) in transactions" :key="index">
+                    <td>{{ transaction.description }}</td>
+                    <td>{{ formatCurrency(transaction.amount) }}</td>
+                    <td>{{ transaction.type === 'income' ? 'Ingreso' : 'Gasto' }}</td>
+                    <td><button @click="eliminarTransaccion($event, index)">Eliminar</button></td>
+                </tr>
+            </tbody>
+        </table>
+      </section>
+
+      <!--Seccion donde se implemeta el resumen de ingresos, gastos y calculo-->
+      <section id="summary-section">
+        <h2>Resumen</h2>
+        <p>Total de Ingresos: {{ formatCurrency(totalIncome) }}</p>
+        <p>Total de Gastos: {{ formatCurrency(totalExpenses) }}</p>
+        <p>Saldo Neto: {{ formatCurrency(netBalance) }}</p>
+        <button @click="exportTransactions">Exportar Transacciones</button>
+      </section>
+
+      <!--Seecion para la implementación de la gráfica-->
+      <section id="chart-section">
+        <h2>Gráfica de Seguimiento</h2>
+        <canvas id="expense-chart"></canvas>
+      </section>
+      <footer>
+        <p>© YLPCreative 2024 Control de Gastos</p>
+      </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
